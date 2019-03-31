@@ -21,8 +21,11 @@ func main(){
 	//Create a new router for redirecting requests to different handlers
 	router = handlers.NewRouter()
 
+	//Allow all types of origins for making request
+	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
+	allowedMethods := handlers.AllowedMethods([]string{"GET","POST","UPDATE","DELETE"})
 	//Start the server port number and router
-	log.Fatal(http.ListenAndServe(":"+port,router))
+	log.Fatal(http.ListenAndServe(":"+port,handlers.CORS(allowedOrigins,allowedMethods)(router)))
 
 }
 
