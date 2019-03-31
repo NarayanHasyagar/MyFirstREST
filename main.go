@@ -1,21 +1,19 @@
 package main;
 
-import {
+import (
 
 	"net/http"
 	
 	"os"
-	"api/handlers"
-}
+	"api"
+)
 
-func main()
-{
+func main(){
 	//Get the PORT environment variable if it exists
 	port := os.GetEnv("PORT")
 
 
-	if port == ""
-	{
+	if port == "" {
 		//Set the port to localhost 8000 port
 		port = "8000"
 	}

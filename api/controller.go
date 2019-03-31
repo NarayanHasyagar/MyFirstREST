@@ -1,30 +1,27 @@
 package api
 
 import
-{
+(
 	import "net/http"
 	import "fmt"
 	import "github.com/gorilla/mux"
 	import "io/ioutil"
 
-}
+)
 
-type Controller struct
-{
+type Controller struct{
 	Repository Repository
 }
 
 //Welcome GET /
-func (c *Controller) Welcome(w http.ResponseWriter, r *http.Request)
-{
+func (c *Controller) Welcome(w http.ResponseWriter, r *http.Request){
 
 	fmt.Fprintf(w,"Welcome to E-Commerce")
 	return
 }
 
 //ViewAllProduct GET /Product
-func (c *Controller) ViewAllProduct(w http.ResponseWriter, r *http.Request)
-{
+func (c *Controller) ViewAllProduct(w http.ResponseWriter, r *http.Request){
 	//Fetch all the products from Database
 
 	products := c.Repository.GetAllProducts()
@@ -38,26 +35,22 @@ func (c *Controller) ViewAllProduct(w http.ResponseWriter, r *http.Request)
 	//Write the product details
 	w.Write(data)
 	return
-
 }
 
 //AddProduct POST /Product/Add
-func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request)
-{
+func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request){
 	//Read the request body
 	body,err := ioutil.Readall(r.Body)
 
 
-	if err!= nil
-	{
+	if err!= nil{
 		log.Fatalln("Error reading the request body")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	defer r.Body.close()
 
-	if err := json.Unmarshall(body, &product); err != nil
-	{
+	if err := json.Unmarshall(body, &product); err != nil{
 		log.Fatall("Error reading the request body")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -65,8 +58,7 @@ func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request)
 
 	//Add the product to database
 	success := c.Repository.AddProduct(product)
-	if !success
-	{
+	if !success {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -79,8 +71,7 @@ func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request)
 }
 
 //ViewProduct GET /Product/{id}
-func (c *Controller) ViewProduct(w http.ResponseWriter,r *http.Request)
-{
+func (c *Controller) ViewProduct(w http.ResponseWriter,r *http.Request){
 	//Get all the input variables
 	vars := mux.Vars(r)
 
