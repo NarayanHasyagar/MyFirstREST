@@ -1,11 +1,12 @@
 package api
 
+//Structure to handle the json data
 type Product struct{
-	Id string 'bson:"id"'
-	Name string 'json:"name"'
-	Title string 'json:"image"'
-	Price uint64 'json:"price"'
-	Rating uint8 'json:"rating"'
+	Id int `bson:"id"`
+	Name string `json:"name"`
+	Title string `json:"image"`
+	Price uint64 `json:"price"`
+	Rating float32 `json:"rating"`
 }
 
 type Products []Product

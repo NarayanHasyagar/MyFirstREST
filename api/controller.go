@@ -1,11 +1,14 @@
 package api
 
-import
-(
-	import "net/http"
-	import "fmt"
-	import "github.com/gorilla/mux"
-	import "io/ioutil"
+import(
+	"encoding/json"
+	 "net/http"
+	 "fmt"
+	 "github.com/gorilla/mux"
+	 "io/ioutil"
+	 "log"
+	 "strconv"
+
 
 )
 
@@ -39,8 +42,10 @@ func (c *Controller) ViewAllProduct(w http.ResponseWriter, r *http.Request){
 
 //AddProduct POST /Product/Add
 func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request){
+
+	var product Product
 	//Read the request body
-	body,err := ioutil.Readall(r.Body)
+	body,err := ioutil.ReadAll(r.Body)
 
 
 	if err!= nil{
@@ -48,10 +53,10 @@ func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	defer r.Body.close()
+	defer r.Body.Close()
 
-	if err := json.Unmarshall(body, &product); err != nil{
-		log.Fatall("Error reading the request body")
+	if err := json.Unmarshal(body, &product); err != nil{
+		log.Fatalln("Error reading the request body")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -81,8 +86,7 @@ func (c *Controller) ViewProduct(w http.ResponseWriter,r *http.Request){
 	//Convert id to integer
 	product_id,err := strconv.Atoi(id);
 
-	if err != nil
-	{
+	if err != nil{
 		log.Fatalln("Error while processing request ")
 	}
 
@@ -94,7 +98,7 @@ func (c *Controller) ViewProduct(w http.ResponseWriter,r *http.Request){
 
 	//Set the http header and status
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOk)
+	w.WriteHeader(http.StatusOK)
 	w.Write(data)
 	return
 
