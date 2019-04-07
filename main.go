@@ -3,7 +3,7 @@ package main
 import(
 	"net/http"
 	"os"
-	"MyFirstREST/api"
+	"REST/api"
 	"log"
 	"github.com/gorilla/handlers"
 )
