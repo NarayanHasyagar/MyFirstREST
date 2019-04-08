@@ -3,6 +3,8 @@ package api
 import(
 	"log"
 	"gopkg.in/mgo.v2"
+	"fmt"
+	
 )
 
 type Repository struct{}
@@ -77,8 +79,25 @@ func (r Repository) AddProduct(product Product) bool{
 		log.Fatalln("Failed to add the product details")
 		return false
 	}
-
+	fmt.Println("Success")
 	return true
 
+}
+
+//Update product details in database
+func (r Repository) UpdateProduct(product Product) bool{
+	session, err := mgo.Dial(SERVER)
+	defer session.Close()
+
+	err = session.DB(DBNAME).C(COLLECTION).UpdateId(product.Id, product)
+	
+
+	if err != nil {
+		log.Fatal(err)
+		return false
+	}
+
+	fmt.Println("Success")
+	return true
 }
 

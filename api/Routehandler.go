@@ -46,7 +46,15 @@ var routes = Routes{
 		"GET",
 		"/Product/{id}",
 		controller.ViewProduct,
-	}}
+	},
+	Route{
+		"UpdateProduct",
+		"PUT",
+		"/Product/Update",
+		controller.UpdateProduct,
+	},
+
+}
 //Implement Router method to handle the requests
 func NewRouter() *mux.Router{
 

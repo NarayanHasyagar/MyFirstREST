@@ -104,6 +104,39 @@ func (c *Controller) ViewProduct(w http.ResponseWriter,r *http.Request){
 
 }
 
+//UpdateProduct PUT /Product/Update
+func (c *Controller) UpdateProduct(w http.ResponseWriter,r *http.Request){
+	var product Product
+	//Read the request body
+	body,err := ioutil.ReadAll(r.Body)
+
+	if err!= nil{
+		log.Fatalln("Error reading the request body")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	defer r.Body.Close()
+
+	if err := json.Unmarshal(body, &product); err != nil{
+		log.Fatalln("Error reading the request body")
+		w.WriteHeader(http.StatusInternalServerError)
+		return 
+	}
+
+	success := c.Repository.UpdateProduct(product)
+	if !success {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.WriteHeader(http.StatusOK)
+    return
+
+
+}
+
 
 
 
