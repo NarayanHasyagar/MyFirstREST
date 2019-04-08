@@ -9,7 +9,7 @@ type Repository struct{}
 
 
 //Localhost server url
-const SERVER = "mongodb://localhost:27017/Ecomm"
+const SERVER = "mongodb://host.docker.internal:27017/Ecomm"
 
 const DBNAME = "Ecomm"
 
