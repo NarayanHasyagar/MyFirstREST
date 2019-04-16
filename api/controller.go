@@ -20,20 +20,19 @@ type Controller struct{
 //Welcome GET /
 func (c *Controller) Welcome(w http.ResponseWriter, r *http.Request){
 
+	
 	w.Header().Set("Content-Type","application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write("Welcome to E-Commerce")
-	return
+	body := json.Marshal("Welcome to E-Commerce")
+	w.Write(body)
+	return 
 }
 
 //ViewAllProduct GET /Product
 func (c *Controller) ViewAllProduct(w http.ResponseWriter, r *http.Request){
 	//Fetch all the products from Database
 
-
-	if products,err := c.Repository.GetAllProducts(); err != nil{
-		
-	}
+	products := c.Repository.GetAllProducts()
 	//Convert the structure to json object
 	data,_ := json.Marshal(products)
 
