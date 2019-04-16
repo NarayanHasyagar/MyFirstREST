@@ -53,8 +53,12 @@ var routes = Routes{
 		"/Product/Update",
 		controller.UpdateProduct,
 	},
-
-}
+	Route{
+		"DeleteProduct",
+		"DELETE",
+		"/Product/Delete/{id}",
+		controller.DeleteProduct,
+	}}
 //Implement Router method to handle the requests
 func NewRouter() *mux.Router{
 

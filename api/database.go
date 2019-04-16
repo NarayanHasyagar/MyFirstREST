@@ -17,7 +17,7 @@ const DBNAME = "Ecomm"
 
 const COLLECTION = "product"
 
-var productId = 20;
+var productId = 22;
 
 //Fetch all the products from the database
 func (r Repository) GetAllProducts() Products{
@@ -76,7 +76,7 @@ func (r Repository) AddProduct(product Product) bool{
 	product.Id = productId
 
 	if err := session.DB(DBNAME).C(COLLECTION).Insert(product); err != nil{
-		log.Fatalln("Failed to add the product details")
+		log.Fatalln(err)
 		return false
 	}
 	fmt.Println("Success")
@@ -99,5 +99,20 @@ func (r Repository) UpdateProduct(product Product) bool{
 
 	fmt.Println("Success")
 	return true
+}
+
+func (r Repository) DeleteProduct(id int) string {
+	session, err := mgo.Dial(SERVER)
+	defer session.Close()
+
+	// Remove product
+	if err = session.DB(DBNAME).C(COLLECTION).RemoveId(id); err != nil {
+		log.Fatal(err)
+		return "INTERNAL ERR"
+	}
+
+	fmt.Println("Success")
+	// Write status
+	return "OK"
 }
 

@@ -8,6 +8,7 @@ import(
 	 "io/ioutil"
 	 "log"
 	 "strconv"
+	 "strings"
 
 
 )
@@ -19,7 +20,9 @@ type Controller struct{
 //Welcome GET /
 func (c *Controller) Welcome(w http.ResponseWriter, r *http.Request){
 
-	fmt.Fprintf(w,"Welcome to E-Commerce")
+	w.Header().Set("Content-Type","application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	w.Write("Welcome to E-Commerce")
 	return
 }
 
@@ -27,7 +30,10 @@ func (c *Controller) Welcome(w http.ResponseWriter, r *http.Request){
 func (c *Controller) ViewAllProduct(w http.ResponseWriter, r *http.Request){
 	//Fetch all the products from Database
 
-	products := c.Repository.GetAllProducts()
+
+	if products,err := c.Repository.GetAllProducts(); err != nil{
+		
+	}
 	//Convert the structure to json object
 	data,_ := json.Marshal(products)
 
@@ -71,6 +77,8 @@ func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request){
 	//Set the response header
 	w.Header().Set("Content-Type","application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
+	data,_ := json.Marshal("success")
+	w.Write(data)
 	return
 
 }
@@ -132,8 +140,42 @@ func (c *Controller) UpdateProduct(w http.ResponseWriter,r *http.Request){
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
     w.Header().Set("Access-Control-Allow-Origin", "*")
     w.WriteHeader(http.StatusOK)
+   data,_ := json.Marshal("success")
+	w.Write(data)
     return
 
+
+}
+
+func (c *Controller) DeleteProduct(w http.ResponseWriter,r *http.Request){
+	//Get all the input variables
+	vars := mux.Vars(r)
+
+	//Get the product id from the variables
+	id := vars["id"]
+
+	//Convert id to integer
+	product_id,err := strconv.Atoi(id);
+
+	if err != nil{
+		log.Fatalln("Error while processing request ")
+	}
+
+	if err := c.Repository.DeleteProduct(product_id); err != "OK" { // delete a product by id
+        fmt.Println(err);
+        if strings.Contains(err, "404") {
+            w.WriteHeader(http.StatusNotFound)
+        } else if strings.Contains(err, "500") {
+            w.WriteHeader(http.StatusInternalServerError)
+        }
+        return
+    }
+    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.WriteHeader(http.StatusOK)
+    data,_ := json.Marshal("success")
+	w.Write(data)
+    return
 
 }
 
