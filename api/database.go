@@ -11,32 +11,35 @@ type Repository struct{}
 
 
 //Localhost server url
-const SERVER = "mongodb://host.docker.internal:27017/Ecomm"
-
-const DBNAME = "Ecomm"
+//const SERVER = "mongodb://host.docker.internal:27058/sradb"
+const SERVER = "mongodb://sraapp:chanGmen0w@64.101.4.199:27058/sradb"
+const DBNAME = "sradb"
 
 const COLLECTION = "product"
 
-var productId = 22;
+//var productId = 22;
 
 //Fetch all the products from the database
 func (r Repository) GetAllProducts() Products{
+	//Refer the model structure template
+	resultset := Products{}
 	//Establish connection with mongo database
 	session , err := mgo.Dial(SERVER)
 	if(err != nil){
-		log.Fatalln("Database connection could not be established")
+		fmt.Println("Database connection could not be established")
+		return resultset
 	}
 	defer session.Close()
 
 	//Get the session object for the required and database collection
 	c := session.DB(DBNAME).C(COLLECTION)
 
-	//Refer the model structure template
-	resultset := Products{}
+	
+	
 
 	//Execute the mongo query for getting the results
 	if err := c.Find(nil).All(&resultset); err != nil{
-			log.Fatalln("Failed to get the results")
+			fmt.Println("Failed to get the results")
 	}
 	return resultset
 }
@@ -44,11 +47,12 @@ func (r Repository) GetAllProducts() Products{
 //Fetch details for a perticular product
 func (r Repository) GetProduct(id int)Product{
 	session,err := mgo.Dial(SERVER)
-
+	defer session.Close()
 	if(err != nil){
+		log.Fatalln(err)
 		log.Fatalln("Database connection could not be established")
 	}
-	defer session.Close()
+	
 
 	c := session.DB(DBNAME).C(COLLECTION)
 
@@ -65,15 +69,19 @@ func (r Repository) GetProduct(id int)Product{
 func (r Repository) AddProduct(product Product) bool{
 
 	session,err := mgo.Dial(SERVER)
-
+	defer session.Close()
 	if(err != nil){
 		log.Fatalln("Database connection could not be established")
 	}
-	defer session.Close()
+	
 
 	//Increase product Id
-	productId = productId + 1
-	product.Id = productId
+	var result Product
+	
+	session.DB(DBNAME).C(COLLECTION).Find(nil).Sort("-_id").Limit(1).One(&result)
+	
+	result.Id = result.Id+1
+	product.Id = result.Id
 
 	if err := session.DB(DBNAME).C(COLLECTION).Insert(product); err != nil{
 		log.Fatalln(err)
@@ -93,7 +101,7 @@ func (r Repository) UpdateProduct(product Product) bool{
 	
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 		return false
 	}
 
@@ -107,7 +115,7 @@ func (r Repository) DeleteProduct(id int) string {
 
 	// Remove product
 	if err = session.DB(DBNAME).C(COLLECTION).RemoveId(id); err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
 		return "INTERNAL ERR"
 	}
 

@@ -6,7 +6,6 @@ import(
 	 "fmt"
 	 "github.com/gorilla/mux"
 	 "io/ioutil"
-	 "log"
 	 "strconv"
 	 "strings"
 
@@ -23,7 +22,7 @@ func (c *Controller) Welcome(w http.ResponseWriter, r *http.Request){
 	
 	w.Header().Set("Content-Type","application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	body := json.Marshal("Welcome to E-Commerce")
+	body,_ := json.Marshal("Welcome to E-Commerce")
 	w.Write(body)
 	return 
 }
@@ -33,6 +32,18 @@ func (c *Controller) ViewAllProduct(w http.ResponseWriter, r *http.Request){
 	//Fetch all the products from Database
 
 	products := c.Repository.GetAllProducts()
+	if(products == (Products{}))
+	{
+		data,_ := json.Marshal("Failed to fetch the product details")
+
+		//Set the response header 
+		w.Header().Set("Content-Type","application/json; charset=UTF-8")
+		w.WriteHeader(StatusInternalServerError)
+
+		//Write the product details
+		w.Write(data)
+		return
+	}
 	//Convert the structure to json object
 	data,_ := json.Marshal(products)
 
@@ -54,14 +65,14 @@ func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request){
 
 
 	if err!= nil{
-		log.Fatalln("Error reading the request body")
+		fmt.Println("Error reading the request body")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	defer r.Body.Close()
 
 	if err := json.Unmarshal(body, &product); err != nil{
-		log.Fatalln("Error reading the request body")
+		fmt.Println("Error reading the request body")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -75,7 +86,8 @@ func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request){
 
 	//Set the response header
 	w.Header().Set("Content-Type","application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.WriteHeader(http.StatusOK)
 	data,_ := json.Marshal("success")
 	w.Write(data)
 	return
@@ -94,11 +106,16 @@ func (c *Controller) ViewProduct(w http.ResponseWriter,r *http.Request){
 	product_id,err := strconv.Atoi(id);
 
 	if err != nil{
-		log.Fatalln("Error while processing request ")
+		fmt.Println("Error while processing request ")
+		return
 	}
 
 	//Get the product information for the input id
 	product := c.Repository.GetProduct(product_id)
+	if(product == (Products{}))
+	{
+
+	}
 
 	//Convert the structure to json object
 	data,_ := json.Marshal(product)
@@ -118,14 +135,14 @@ func (c *Controller) UpdateProduct(w http.ResponseWriter,r *http.Request){
 	body,err := ioutil.ReadAll(r.Body)
 
 	if err!= nil{
-		log.Fatalln("Error reading the request body")
+		fmt.Println("Error reading the request body")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	defer r.Body.Close()
 
 	if err := json.Unmarshal(body, &product); err != nil{
-		log.Fatalln("Error reading the request body")
+		fmt.Println("Error reading the request body")
 		w.WriteHeader(http.StatusInternalServerError)
 		return 
 	}
@@ -157,7 +174,7 @@ func (c *Controller) DeleteProduct(w http.ResponseWriter,r *http.Request){
 	product_id,err := strconv.Atoi(id);
 
 	if err != nil{
-		log.Fatalln("Error while processing request ")
+		fmt.Println("Error while processing request ")
 	}
 
 	if err := c.Repository.DeleteProduct(product_id); err != "OK" { // delete a product by id
