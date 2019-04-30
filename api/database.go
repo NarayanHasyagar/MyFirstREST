@@ -12,7 +12,7 @@ type Repository struct{}
 
 //Localhost server url
 //const SERVER = "mongodb://host.docker.internal:27058/sradb"
-const SERVER = "mongodb://sraapp:chanGmen0w@64.101.4.199:27058/sradb"
+const SERVER = ""
 const DBNAME = "sradb"
 
 const COLLECTION = "product"
